@@ -1,23 +1,18 @@
-# Function for addition
 def add(x, y):
     return x + y
 
-# Function for subtraction
 def subtract(x, y):
     return x - y
 
-# Function for multiplication
 def multiply(x, y):
     return x * y
 
-# Function for division
 def divide(x, y):
     if y == 0:
         return "Error! Division by zero."
     else:
         return x / y
 
-# Main function to display options and take inputs
 def calculator():
     print("Simple Calculator")
     print("-----------------")
@@ -28,10 +23,8 @@ def calculator():
     print("4. Division")
 
     while True:
-        # Take input from the user
         choice = input("Enter choice (1/2/3/4): ")
 
-        # Check if choice is valid
         if choice in ['1', '2', '3', '4']:
             num1 = float(input("Enter first number: "))
             num2 = float(input("Enter second number: "))
@@ -49,7 +42,6 @@ def calculator():
         else:
             print("Invalid Input")
 
-        # Ask if the user wants to perform another calculation
         next_calculation = input("Do you want to perform another calculation? (yes/no): ")
         if next_calculation.lower() != 'yes':
             break
