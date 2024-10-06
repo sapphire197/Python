@@ -1,0 +1,11 @@
+{
+    "😀": "positive",
+    "😂": "positive",
+    "😍": "positive",
+    "😭": "negative",
+    "😡": "negative",
+    "😐": "neutral",
+    "😎": "positive",
+    "😢": "negative",
+    "😃": "positive"
+}
