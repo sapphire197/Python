@@ -8,3 +8,4 @@ CREATE TABLE tasks (
 );
 
 SELECT * FROM tasks;
+
