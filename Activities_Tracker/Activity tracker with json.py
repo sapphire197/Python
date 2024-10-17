@@ -5,7 +5,7 @@ import json
 import os
 
 # Full path to the activities.json file
-ACTIVITY_FILE = r'C:\Users\Alagammai\Alagu\Projects\Github\Python\Python\activities.json'
+ACTIVITY_FILE = r'C:\Users\Alagammai\Alagu\Projects\Github\Python\Python\Activities_Tracker\activities.json'
 
 # Load activities from the file if it exists
 def load_activities():
