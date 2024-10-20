@@ -9,3 +9,9 @@ This Python project translates between English text and Morse code. It's a simpl
 - **Support for Numbers and Punctuation**: The program recognizes numbers and common punctuation marks.
 - **Interactive Menu**: Easy-to-use interface to switch between text-to-Morse and Morse-to-text translations.
 
+## Morse Code Dictionary
+The program supports the following characters:
+
+Letters: A-Z
+Numbers: 0-9
+Punctuation: ,, ., ?, /, -, (, )
