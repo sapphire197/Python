@@ -13,10 +13,10 @@ The **Emoji Sentiment Analyzer** is a Python project that analyzes the sentiment
 
 ## Project Structure
 
-Emoji-Sentiment-Analyzer/ 
-  │ 
-  ├── emoji_sentiment_analyzer.py # Main script 
-  ├── emoji_sentiment_dict.json # Predefined sentiment dictionary 
-  ├── README.md # Project description and setup 
+Emoji-Sentiment-Analyzer/ <br>
+  │ <br>
+  ├── emoji_sentiment_analyzer.py # Main script <br>
+  ├── emoji_sentiment_dict.json # Predefined sentiment dictionary <br>
+  ├── README.md # Project description and setup <br>
   └── sample_texts.txt
 
