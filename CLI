@@ -1,3 +1,5 @@
+# pip install plyer
+
 import json
 from datetime import datetime, timedelta
 from plyer import notification
