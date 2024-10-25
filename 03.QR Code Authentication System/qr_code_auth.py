@@ -1,5 +1,4 @@
-# pip install qrcode[pil] pillow pyzbar
-
+# Import libraries
 import qrcode
 from PIL import Image
 from pyzbar.pyzbar import decode
@@ -7,16 +6,22 @@ import base64
 
 # Function to encrypt credentials into a QR code
 def generate_qr_code(username, password, filename='qr_code.png'):
-    # Encrypt credentials (basic encryption using base64)
+    # Encode credentials using base64
     credentials = f'{username}:{password}'
     encoded_credentials = base64.b64encode(credentials.encode()).decode()
 
-    # Generate QR code
-    qr = qrcode.QRCode(version=1, box_size=10, border=5)
+    # Generate QR code with error correction
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
     qr.add_data(encoded_credentials)
     qr.make(fit=True)
 
-    img = qr.make_image(fill='black', back_color='white')
+    # Create and save the QR code image
+    img = qr.make_image(fill_color="black", back_color="white")
     img.save(filename)
     print(f"QR code saved as {filename}")
 
@@ -25,9 +30,13 @@ def scan_qr_code(qr_image_path):
     img = Image.open(qr_image_path)
     decoded_data = decode(img)
 
+    # Check if data is decoded successfully
     if decoded_data:
+        # Decode base64 content from the QR code
         qr_content = decoded_data[0].data.decode()
         decoded_credentials = base64.b64decode(qr_content).decode()
+
+        # Extract and print username and password
         username, password = decoded_credentials.split(':')
         print(f"Decoded Credentials - Username: {username}, Password: {password}")
         return username, password
