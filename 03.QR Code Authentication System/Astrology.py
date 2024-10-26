@@ -7,10 +7,16 @@ def get_horoscope(sign):
     
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, 'html.parser')
-        horoscope = soup.find('div', class_='main-horoscope').get_text(strip=True)
-        return horoscope
+        # Change the class below if necessary based on the current structure of the site
+        horoscope_div = soup.find('div', class_='main-horoscope')
+        
+        if horoscope_div:
+            horoscope = horoscope_div.get_text(strip=True)
+            return horoscope
+        else:
+            return f"Horsecope not available for {sign.capitalize()}. Element not found."
     else:
-        return "Horoscope not available."
+        return f"Horoscope not available for {sign.capitalize()}. Status code: {response.status_code}"
 
 def get_all_horoscopes():
     zodiac_signs = [
