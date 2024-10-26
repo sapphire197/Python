@@ -10,10 +10,4 @@ This is a simple Python GUI application for tracking your reading progress on mu
 - **Remove Books**: Remove a book from the tracker.
 - **Persistent Storage**: Data is stored in `JSON` format, allowing persistence between sessions.
 
-## Setup
 
-1. **Clone the repository**:
-
-   ```bash
-   git clone https://github.com/YourUsername/Book_Tracker.git
-   cd Book_Tracker
