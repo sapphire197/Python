@@ -2,39 +2,52 @@ from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import scrypt
 from Crypto.Random import get_random_bytes
 import base64
-import os
 
-# Define constants
-SALT = b"your_salt_value"  # Replace with a secure, unique salt for each installation
-KEY_LENGTH = 32  # AES-256 requires a 32-byte key
-NONCE_SIZE = 12  # AES-GCM recommended nonce size
-HASH_ITERATIONS = 16384
+# Constants for encryption
+SALT_SIZE = 16
+KEY_SIZE = 32
+NONCE_SIZE = 12
+TAG_SIZE = 16
 
-def derive_key(password: str) -> bytes:
-    """Derives a secure key using scrypt from the given password."""
-    return scrypt(password.encode(), SALT, KEY_LENGTH, N=HASH_ITERATIONS, r=8, p=1)
+def generate_key(password, salt):
+    """Generates a secure key using scrypt."""
+    key = scrypt(password.encode(), salt, KEY_SIZE, N=2**14, r=8, p=1)
+    return key
 
-def encrypt(data: str, key: bytes) -> str:
-    """Encrypts data with AES-GCM and returns the encrypted string in base64 format."""
-    cipher = AES.new(key, AES.MODE_GCM)
-    nonce = cipher.nonce
-    ciphertext, tag = cipher.encrypt_and_digest(data.encode())
-    return base64.b64encode(nonce + tag + ciphertext).decode()
+def encrypt(password, plaintext):
+    """Encrypts plaintext with AES-GCM."""
+    salt = get_random_bytes(SALT_SIZE)
+    key = generate_key(password, salt)
+    cipher = AES.new(key, AES.MODE_GCM, nonce=get_random_bytes(NONCE_SIZE))
+    ciphertext, tag = cipher.encrypt_and_digest(plaintext.encode())
+    
+    # Encode components for storage
+    return base64.b64encode(salt + cipher.nonce + tag + ciphertext).decode('utf-8')
 
-def decrypt(encrypted_data: str, key: bytes) -> str:
-    """Decrypts AES-GCM encrypted data from base64 format."""
-    data = base64.b64decode(encrypted_data)
-    nonce = data[:NONCE_SIZE]
-    tag = data[NONCE_SIZE:NONCE_SIZE + 16]
-    ciphertext = data[NONCE_SIZE + 16:]
+def decrypt(password, encoded_data):
+    """Decrypts encoded data with AES-GCM."""
+    decoded_data = base64.b64decode(encoded_data)
+    salt = decoded_data[:SALT_SIZE]
+    nonce = decoded_data[SALT_SIZE:SALT_SIZE + NONCE_SIZE]
+    tag = decoded_data[SALT_SIZE + NONCE_SIZE:SALT_SIZE + NONCE_SIZE + TAG_SIZE]
+    ciphertext = decoded_data[SALT_SIZE + NONCE_SIZE + TAG_SIZE:]
+    
+    key = generate_key(password, salt)
     cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
-    return cipher.decrypt_and_verify(ciphertext, tag).decode()
+    plaintext = cipher.decrypt_and_verify(ciphertext, tag)
+    return plaintext.decode('utf-8')
 
-def hash_master_password(master_password: str) -> str:
+def hash_master_password(password):
     """Hashes the master password for secure storage."""
-    return base64.b64encode(derive_key(master_password)).decode()
+    salt = get_random_bytes(SALT_SIZE)
+    hashed_password = scrypt(password.encode(), salt, KEY_SIZE, N=2**14, r=8, p=1)
+    return base64.b64encode(salt + hashed_password).decode('utf-8')
 
-def verify_master_password(input_password: str, stored_password: str) -> bool:
-    """Verifies if the provided master password matches the stored hashed password."""
-    return hash_master_password(input_password) == stored_password
+def verify_master_password(stored_hash, password):
+    """Verifies the master password."""
+    decoded_hash = base64.b64decode(stored_hash)
+    salt = decoded_hash[:SALT_SIZE]
+    stored_key = decoded_hash[SALT_SIZE:]
+    derived_key = scrypt(password.encode(), salt, KEY_SIZE, N=2**14, r=8, p=1)
+    return derived_key == stored_key
 
