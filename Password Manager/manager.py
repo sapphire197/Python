@@ -1,75 +1,62 @@
-from getpass import getpass
-from encryption import hash_master_password, verify_master_password
 from db_handler import add_credential, retrieve_credential, delete_credential
-from password_generator import generate_password
-from checker import check_password_strength
+from encryption import hash_master_password, verify_master_password
+from getpass import getpass
 
-def authenticate_master_password():
-    try:
-        # Ask user for master password
-        master_password = getpass("Enter your master password: ")
-        # Verify the master password
-        if not verify_master_password(master_password):
-            print("Incorrect master password. Access denied.")
-            return False
-        return True
-    except Exception as e:
-        print(f"Authentication failed: {e}")
-        return False
+def create_master_password():
+    """Sets up the master password."""
+    master_password = getpass("Set your master password: ")
+    hashed_password = hash_master_password(master_password)
+    # Save hashed_password securely (e.g., in a config file or encrypted storage)
+    print("Master password set and saved.")
 
-def main_menu():
+def add_service():
+    """Adds a new service with username and password."""
+    service = input("Enter the service name: ")
+    username = input("Enter the username: ")
+    password = getpass("Enter the password: ")
+    add_credential(service, username, password)
+    print("Credential added successfully.")
+
+def view_service():
+    """Retrieves and displays credentials for a service."""
+    service = input("Enter the service name: ")
+    credentials = retrieve_credential(service)
+    if credentials:
+        print(f"Username: {credentials['username']}")
+        print(f"Password: {credentials['password']}")
+    else:
+        print("No credentials found for the specified service.")
+
+def delete_service():
+    """Deletes a service's credentials."""
+    service = input("Enter the service name to delete: ")
+    success = delete_credential(service)
+    if success:
+        print("Credential deleted successfully.")
+    else:
+        print("No credential found for the specified service.")
+
+def main():
+    """Main menu for the password manager."""
+    print("Welcome to the Password Manager")
     while True:
-        print("\nPassword Manager")
-        print("1. Add New Credential")
-        print("2. Retrieve Credential")
-        print("3. Delete Credential")
-        print("4. Generate Strong Password")
-        print("5. Exit")
+        print("\nOptions:")
+        print("1. Add new credential")
+        print("2. View credential")
+        print("3. Delete credential")
+        print("4. Exit")
+        choice = input("Enter your choice: ")
         
-        choice = input("Choose an option: ")
-        
-        if choice == "1":
-            service = input("Enter service name: ")
-            username = input("Enter username: ")
-            password = getpass("Enter password (leave blank to auto-generate): ")
-            
-            if not password:
-                password = generate_password()
-                print(f"Generated Password: {password}")
-            
-            if check_password_strength(password) < 3:
-                print("Warning: Password is weak.")
-            
-            add_credential(service, username, password)
-            print("Credential added successfully.")
-        
-        elif choice == "2":
-            service = input("Enter service name to retrieve: ")
-            credential = retrieve_credential(service)
-            if credential:
-                print(f"Username: {credential['username']}\nPassword: {credential['password']}")
-            else:
-                print("Credential not found.")
-        
-        elif choice == "3":
-            service = input("Enter service name to delete: ")
-            if delete_credential(service):
-                print("Credential deleted successfully.")
-            else:
-                print("Credential not found.")
-        
-        elif choice == "4":
-            length = int(input("Enter desired password length: "))
-            password = generate_password(length)
-            print(f"Generated Password: {password}")
-        
-        elif choice == "5":
-            print("Exiting Password Manager.")
+        if choice == '1':
+            add_service()
+        elif choice == '2':
+            view_service()
+        elif choice == '3':
+            delete_service()
+        elif choice == '4':
             break
         else:
-            print("Invalid option. Please try again.")
+            print("Invalid choice, please try again.")
 
 if __name__ == "__main__":
-    print("Welcome to Secure Password Manager")
-    if authenticate_master_password():
-        main_menu()
+    main()
