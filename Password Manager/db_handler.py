@@ -1,15 +1,14 @@
 import mysql.connector
 from mysql.connector import Error
-from encryption import encrypt, decrypt, derive_key
 
-# MySQL connection details - update these with your MySQL credentials
+# MySQL database configuration
 DB_HOST = "localhost"
 DB_USER = "your_username"
 DB_PASSWORD = "your_password"
-DB_NAME = "your_database"
+DB_NAME = "password_manager_db"
 
 def create_connection():
-    """Creates and returns a connection to the MySQL database."""
+    """Establish a database connection."""
     try:
         connection = mysql.connector.connect(
             host=DB_HOST,
@@ -18,88 +17,69 @@ def create_connection():
             database=DB_NAME
         )
         if connection.is_connected():
-            return connection
+            print("Connection to MySQL database successful.")
+        return connection
     except Error as e:
-        print(f"Error connecting to MySQL: {e}")
+        print(f"Error: '{e}'")
         return None
 
-def init_db():
-    """Initializes the database and creates the credentials table if it doesn't exist."""
+def initialize_database():
+    """Creates the credentials table if it does not already exist."""
     connection = create_connection()
     if connection:
-        try:
-            cursor = connection.cursor()
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS credentials (
-                    service VARCHAR(255) PRIMARY KEY,
-                    username VARCHAR(255),
-                    password TEXT
-                )
-            ''')
-            connection.commit()
-        except Error as e:
-            print(f"Error initializing database: {e}")
-        finally:
-            cursor.close()
-            connection.close()
+        cursor = connection.cursor()
+        create_table_query = """
+        CREATE TABLE IF NOT EXISTS credentials (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            service_name VARCHAR(255) NOT NULL,
+            username VARCHAR(255) NOT NULL,
+            password TEXT NOT NULL
+        );
+        """
+        cursor.execute(create_table_query)
+        connection.commit()
+        cursor.close()
+        connection.close()
 
-def add_credential(service: str, username: str, password: str):
-    """Adds an encrypted credential to the database."""
-    key = derive_key("master_password")  # Replace "master_password" with actual master password
-    encrypted_password = encrypt(password, key)
-    
+def add_credential(service_name, username, encrypted_password):
+    """Inserts a new credential into the credentials table."""
     connection = create_connection()
     if connection:
-        try:
-            cursor = connection.cursor()
-            cursor.execute('''
-                INSERT INTO credentials (service, username, password)
-                VALUES (%s, %s, %s)
-                ON DUPLICATE KEY UPDATE username=%s, password=%s
-            ''', (service, username, encrypted_password, username, encrypted_password))
-            connection.commit()
-        except Error as e:
-            print(f"Error adding credential: {e}")
-        finally:
-            cursor.close()
-            connection.close()
+        cursor = connection.cursor()
+        insert_query = """
+        INSERT INTO credentials (service_name, username, password)
+        VALUES (%s, %s, %s);
+        """
+        cursor.execute(insert_query, (service_name, username, encrypted_password))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        print("Credential added successfully.")
 
-def retrieve_credential(service: str):
-    """Retrieves and decrypts a credential from the database."""
-    key = derive_key("master_password")  # Replace "master_password" with actual master password
-    
+def retrieve_credential(service_name):
+    """Fetches the credential for a given service name."""
     connection = create_connection()
     if connection:
-        try:
-            cursor = connection.cursor()
-            cursor.execute('SELECT username, password FROM credentials WHERE service = %s', (service,))
-            row = cursor.fetchone()
-            
-            if row:
-                username, encrypted_password = row
-                password = decrypt(encrypted_password, key)
-                return {'username': username, 'password': password}
+        cursor = connection.cursor()
+        select_query = "SELECT username, password FROM credentials WHERE service_name = %s;"
+        cursor.execute(select_query, (service_name,))
+        result = cursor.fetchone()
+        cursor.close()
+        connection.close()
+        if result:
+            return {"username": result[0], "password": result[1]}
+        else:
+            print("No credential found for the specified service.")
             return None
-        except Error as e:
-            print(f"Error retrieving credential: {e}")
-        finally:
-            cursor.close()
-            connection.close()
 
-def delete_credential(service: str):
-    """Deletes a credential from the database."""
+def delete_credential(service_name):
+    """Deletes the credential for a specified service name."""
     connection = create_connection()
     if connection:
-        try:
-            cursor = connection.cursor()
-            cursor.execute('DELETE FROM credentials WHERE service = %s', (service,))
-            connection.commit()
-            return cursor.rowcount > 0
-        except Error as e:
-            print(f"Error deleting credential: {e}")
-        finally:
-            cursor.close()
-            connection.close()
-
-# Initialize the database when the module is imported
-init_db()
+        cursor = connection.cursor()
+        delete_query = "DELETE FROM credentials WHERE service_name = %s;"
+        cursor.execute(delete_query, (service_name,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        print("Credential deleted successfully.")
