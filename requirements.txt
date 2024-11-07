@@ -1,1 +1,2 @@
-pycryptodome==3.15.0  # For AES encryption and decryption
+pycryptodome==3.15.0      # For AES encryption and decryption
+mysql-connector-python==8.0.33  # For MySQL database connectivity
