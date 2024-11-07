@@ -37,3 +37,4 @@ def hash_master_password(master_password: str) -> str:
 def verify_master_password(input_password: str, stored_password: str) -> bool:
     """Verifies if the provided master password matches the stored hashed password."""
     return hash_master_password(input_password) == stored_password
+
