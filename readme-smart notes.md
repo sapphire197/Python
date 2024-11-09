@@ -8,8 +8,6 @@
 7. [Modules Breakdown](#modules-breakdown)
 8. [Future Enhancements](#future-enhancements)
 9. [Contributing](#contributing)
-10. [License](#license)
-11. [Contact](#contact)
 
 ---
 
