@@ -1,2 +1,2 @@
 # Python Projects
-contains projects which uses python language 
+contains projects which uses python programming language 
