@@ -12,10 +12,9 @@ A simple Python-based graphical user interface (GUI) application to display cale
 4. [Project Structure](#project-structure)
 5. [Requirements](#requirements)
 6. [Example Output](#example-output)
-7. [Screenshots](#screenshots)
-8. [Future Improvements](#future-improvements)
-9. [License](#license)
-10. [Contributing](#contributing)
+7. [Future Improvements](#future-improvements)
+8. [License](#license)
+9. [Contributing](#contributing)
 
 ---
 
@@ -90,16 +89,6 @@ Mo Tu We Th Fr Sa Su
 23 24 25 26 27 28 29
 30 31
 ```
-
----
-
-## Screenshots
-
-**Main Interface:**
-
-![GUI Calendar Screenshot](#)
-
-(Add a screenshot or placeholder here to make the README more engaging.)
 
 ---
 
