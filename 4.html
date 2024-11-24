@@ -1,0 +1,179 @@
+<!--index.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Scheduler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        .container {
+            width: 70%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        input[type="text"], input[type="datetime-local"] {
+            padding: 10px;
+            width: 100%;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>College Scheduler</h1>
+    <div class="container">
+        <h2>Add Schedule</h2>
+        <form id="schedule-form">
+            <label for="title">Title:</label>
+            <input type="text" id="title" required>
+
+            <label for="description">Description:</label>
+            <input type="text" id="description" required>
+
+            <label for="start-time">Start Time:</label>
+            <input type="datetime-local" id="start-time" required>
+
+            <label for="end-time">End Time:</label>
+            <input type="datetime-local" id="end-time" required>
+
+            <label for="alert-time">Alert Time:</label>
+            <input type="datetime-local" id="alert-time" required>
+
+            <button type="submit">Add Schedule</button>
+        </form>
+
+        <h2>Schedules</h2>
+        <table id="schedule-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Alert Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        // Add schedule
+        document.getElementById('schedule-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const startTime = document.getElementById('start-time').value;
+            const endTime = document.getElementById('end-time').value;
+            const alertTime = document.getElementById('alert-time').value;
+
+            const schedule = {
+                user_id: 1, // Assume logged in user with ID 1
+                title,
+                description,
+                start_time: startTime,
+                end_time: endTime,
+                alert_time: alertTime
+            };
+
+            fetch('http://localhost:5000/add_schedule', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(schedule)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Schedule added successfully') {
+                    alert('Schedule added!');
+                    loadSchedules(); // Reload schedules after adding
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        // Load schedules
+        function loadSchedules() {
+            fetch('http://localhost:5000/get_schedules/1') // Assume user ID 1
+                .then(response => response.json())
+                .then(schedules => {
+                    const tableBody = document.getElementById('schedule-table').getElementsByTagName('tbody')[0];
+                    tableBody.innerHTML = ''; // Clear existing table rows
+
+                    schedules.forEach(schedule => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${schedule.title}</td>
+                            <td>${schedule.description}</td>
+                            <td>${schedule.start_time}</td>
+                            <td>${schedule.end_time}</td>
+                            <td>${schedule.alert_time}</td>
+                            <td><button onclick="deleteSchedule(${schedule.schedule_id})">Delete</button></td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                });
+        }
+
+        // Delete schedule
+        function deleteSchedule(scheduleId) {
+            fetch(`http://localhost:5000/delete_schedule/${scheduleId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Schedule deleted successfully') {
+                    alert('Schedule deleted!');
+                    loadSchedules(); // Reload schedules after deletion
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Load schedules on page load
+        window.onload = loadSchedules;
+    </script>
+</body>
+</html>
