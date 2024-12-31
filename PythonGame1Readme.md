@@ -145,3 +145,14 @@ class TestSnakeGame(unittest.TestCase):
         self.assertEqual(self.game.score, 1)
 ```
 
+---
+
+### **assets/**
+1. `apple.png`: An image for the food item.
+2. `snake_head.png`: An image for the snake's head.
+3. `snake_body.png`: An image for the snake's body.
+
+You can create or download these images and place them in the `assets/` directory.
+
+---
+
