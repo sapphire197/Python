@@ -48,3 +48,15 @@ SnakeGame/
 ├── requirements.txt
 └── LICENSE
 ```
+
+## Controls
+- Arrow Keys: Move the snake
+- Quit: Close the game window
+
+## Requirements
+- Python 3.7+
+- Pygame
+
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
