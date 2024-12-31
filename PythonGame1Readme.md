@@ -156,3 +156,16 @@ You can create or download these images and place them in the `assets/` director
 
 ---
 
+### **requirements.txt**
+List of required dependencies:
+```
+pygame==2.5.0
+```
+
+---
+
+
+
+
+
+
