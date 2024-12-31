@@ -122,3 +122,26 @@ class TestFood(unittest.TestCase):
         self.assertNotEqual(self.food.position, old_position)
 ```
 
+---
+
+### **tests/test_game.py**
+Unit tests for the main game logic.
+
+```python
+import unittest
+from src.game import SnakeGame
+from src.config import Config
+
+class TestSnakeGame(unittest.TestCase):
+    def setUp(self):
+        self.config = Config()
+        self.game = SnakeGame()
+
+    def test_score_initially_zero(self):
+        self.assertEqual(self.game.score, 0)
+
+    def test_score_increment(self):
+        self.game.score += 1
+        self.assertEqual(self.game.score, 1)
+```
+
