@@ -95,9 +95,30 @@ class TestSnake(unittest.TestCase):
     def test_collision_with_self(self):
         self.snake.body = [[100, 50], [90, 50], [80, 50], [100, 50]]
         self.assertTrue(self.snake.check_self_collision())
+```
 
+### **tests/test_food.py**
+Unit tests for the food module.
 
+```python
+import unittest
+from src.food import Food
+from src.snake import Snake
+from src.config import Config
 
+class TestFood(unittest.TestCase):
+    def setUp(self):
+        self.config = Config()
+        self.food = Food(self.config)
+        self.snake = Snake(self.config)
 
+    def test_initial_position(self):
+        self.assertTrue(0 <= self.food.position[0] < self.config.WIDTH)
+        self.assertTrue(0 <= self.food.position[1] < self.config.HEIGHT)
 
+    def test_spawn(self):
+        old_position = self.food.position
+        self.food.spawn(self.snake.body)
+        self.assertNotEqual(self.food.position, old_position)
+```
 
