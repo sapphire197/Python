@@ -60,3 +60,44 @@ SnakeGame/
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## Contributing
+Pull requests are welcome. For significant changes, please open an issue to discuss your ideas first.
+
+---
+
+### **tests/test_snake.py**
+Unit tests for the snake module.
+
+```python
+import unittest
+from src.snake import Snake
+from src.config import Config
+
+class TestSnake(unittest.TestCase):
+    def setUp(self):
+        self.config = Config()
+        self.snake = Snake(self.config)
+
+    def test_initial_length(self):
+        self.assertEqual(len(self.snake.body), 3)
+
+    def test_move(self):
+        initial_head = self.snake.body[0]
+        self.snake.move()
+        self.assertNotEqual(self.snake.body[0], initial_head)
+
+    def test_grow(self):
+        initial_length = len(self.snake.body)
+        self.snake.grow()
+        self.snake.move()
+        self.assertEqual(len(self.snake.body), initial_length + 1)
+
+    def test_collision_with_self(self):
+        self.snake.body = [[100, 50], [90, 50], [80, 50], [100, 50]]
+        self.assertTrue(self.snake.check_self_collision())
+
+
+
+
+
+
